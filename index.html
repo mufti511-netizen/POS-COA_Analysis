@@ -1,0 +1,1984 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe & UML — Sistem POS Bakso Multi-Cabang</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0e1a;
+  --surface: #111827;
+  --surface2: #1a2235;
+  --surface3: #222d42;
+  --border: #2a3a55;
+  --accent: #3b82f6;
+  --accent2: #06b6d4;
+  --accent3: #8b5cf6;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --text: #e2e8f0;
+  --text2: #94a3b8;
+  --text3: #64748b;
+  --mono: 'Space Mono', monospace;
+  --sans: 'Plus Jakarta Sans', sans-serif;
+  --radius: 10px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.4);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* ===== WATERMARK ===== */
+.watermark-fixed {
+  position: fixed;
+  bottom: 18px;
+  right: 22px;
+  z-index: 99999;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+.watermark-pill {
+  background: linear-gradient(135deg, rgba(59,130,246,0.18) 0%, rgba(139,92,246,0.18) 100%);
+  border: 1px solid rgba(139,92,246,0.55);
+  border-radius: 40px;
+  padding: 7px 18px 7px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 24px rgba(139,92,246,0.18), 0 0 0 1px rgba(59,130,246,0.10);
+}
+.watermark-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  flex-shrink: 0;
+  box-shadow: 0 0 8px rgba(139,92,246,0.5);
+}
+.watermark-text {
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  background: linear-gradient(90deg, #60a5fa, #c084fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  white-space: nowrap;
+}
+.watermark-sub {
+  font-size: 9px;
+  color: rgba(148,163,184,0.7);
+  font-family: 'Space Mono', monospace;
+  letter-spacing: 1px;
+  text-align: right;
+  padding-right: 4px;
+}
+
+/* Diagonal watermark overlay (subtle) */
+.watermark-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  overflow: hidden;
+}
+.watermark-overlay::before {
+  content: 'Property Of ~MAyx   Property Of ~MAyx   Property Of ~MAyx   Property Of ~MAyx   Property Of ~MAyx   Property Of ~MAyx   Property Of ~MAyx   Property Of ~MAyx';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-30deg);
+  font-family: 'Space Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(139,92,246,0.07);
+  white-space: nowrap;
+  letter-spacing: 3px;
+  width: 250%;
+  text-align: center;
+  line-height: 3.5;
+  word-break: keep-all;
+}
+
+/* ===== ACCESS FORBIDDEN OVERLAY ===== */
+#forbidden-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  background: rgba(8,10,20,0.97);
+  backdrop-filter: blur(16px);
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 0;
+}
+#forbidden-overlay.show {
+  display: flex;
+}
+.forbidden-card {
+  background: linear-gradient(135deg, #111827 0%, #1a1040 100%);
+  border: 1.5px solid rgba(239,68,68,0.4);
+  border-radius: 16px;
+  padding: 48px 56px;
+  text-align: center;
+  max-width: 440px;
+  width: 90%;
+  box-shadow: 0 0 60px rgba(239,68,68,0.12), 0 8px 48px rgba(0,0,0,0.6);
+  animation: forbiddenIn 0.3s cubic-bezier(.17,.67,.42,1.2);
+}
+@keyframes forbiddenIn {
+  from { transform: scale(0.88); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.forbidden-icon {
+  font-size: 52px;
+  margin-bottom: 16px;
+  display: block;
+  filter: drop-shadow(0 0 16px rgba(239,68,68,0.5));
+}
+.forbidden-title {
+  font-family: 'Space Mono', monospace;
+  font-size: 22px;
+  font-weight: 700;
+  color: #ef4444;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+.forbidden-sub {
+  font-size: 13px;
+  color: #94a3b8;
+  margin-bottom: 6px;
+  line-height: 1.6;
+}
+.forbidden-brand {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 6px 20px;
+  border-radius: 20px;
+  background: linear-gradient(90deg, rgba(59,130,246,0.15), rgba(139,92,246,0.15));
+  border: 1px solid rgba(139,92,246,0.35);
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  background-image: linear-gradient(90deg, #60a5fa, #c084fc);
+  -webkit-text-fill-color: transparent;
+}
+.forbidden-close {
+  margin-top: 24px;
+  padding: 9px 28px;
+  border-radius: 8px;
+  background: rgba(239,68,68,0.12);
+  border: 1px solid rgba(239,68,68,0.3);
+  color: #ef4444;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: 'Space Mono', monospace;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: background 0.2s;
+}
+.forbidden-close:hover { background: rgba(239,68,68,0.22); }
+
+/* NAV */
+.top-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(10,14,26,0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  height: 60px;
+  display: flex; align-items: center; gap: 0;
+}
+.nav-logo {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--accent2);
+  margin-right: 32px;
+  white-space: nowrap;
+}
+.nav-logo span { color: var(--text3); }
+.nav-tabs { display: flex; gap: 4px; flex: 1; overflow-x: auto; }
+.nav-tab {
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  border: none;
+  background: transparent;
+  color: var(--text3);
+  transition: all 0.2s;
+  font-family: var(--sans);
+}
+.nav-tab:hover { background: var(--surface2); color: var(--text); }
+.nav-tab.active { background: var(--accent); color: white; }
+
+/* MAIN */
+.main { padding-top: 60px; }
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* HERO */
+.hero {
+  background: linear-gradient(135deg, #0a0e1a 0%, #111827 40%, #0d1a33 100%);
+  padding: 80px 48px 60px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 30% 50%, rgba(59,130,246,0.1) 0%, transparent 60%),
+              radial-gradient(ellipse at 70% 30%, rgba(139,92,246,0.08) 0%, transparent 50%);
+}
+.hero-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--accent);
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--accent);
+  margin-bottom: 24px;
+  position: relative;
+}
+.hero h1 {
+  font-size: clamp(28px, 5vw, 52px);
+  font-weight: 800;
+  line-height: 1.15;
+  margin-bottom: 16px;
+  position: relative;
+  background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.hero p {
+  font-size: 16px;
+  color: var(--text2);
+  max-width: 600px;
+  margin: 0 auto 48px;
+  position: relative;
+}
+.hero-stats {
+  display: flex; justify-content: center; gap: 48px;
+  flex-wrap: wrap;
+  position: relative;
+}
+.stat { text-align: center; }
+.stat-num { font-family: var(--mono); font-size: 28px; font-weight: 700; color: var(--accent); }
+.stat-label { font-size: 11px; color: var(--text3); margin-top: 4px; letter-spacing: 0.5px; }
+
+/* SECTION LAYOUT */
+.section-wrap { max-width: 1280px; margin: 0 auto; padding: 48px 24px; }
+.section-title {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--accent2);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.section-heading {
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 32px;
+  color: var(--text);
+}
+
+/* UML DIAGRAM STYLES */
+.uml-container {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 32px;
+}
+.uml-header {
+  background: var(--surface2);
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+}
+.uml-header-dots { display: flex; gap: 6px; }
+.dot { width: 12px; height: 12px; border-radius: 50%; }
+.dot-r { background: #ef4444; } .dot-y { background: #f59e0b; } .dot-g { background: #10b981; }
+.uml-title {
+  font-family: var(--mono); font-size: 12px; color: var(--text2);
+  margin-left: 8px;
+}
+.uml-body { padding: 24px; overflow-x: auto; }
+
+/* USE CASE DIAGRAM */
+.usecase-diagram {
+  display: grid;
+  grid-template-columns: 180px 1fr 180px;
+  gap: 24px;
+  min-height: 420px;
+  align-items: start;
+}
+.actor-col { display: flex; flex-direction: column; align-items: center; gap: 24px; }
+.actor {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  cursor: default;
+}
+.actor-icon {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  background: rgba(59,130,246,0.1);
+}
+.actor-name { font-size: 11px; font-weight: 600; color: var(--text2); text-align: center; }
+.actor.supplier .actor-icon { border-color: var(--success); background: rgba(16,185,129,0.1); }
+.actor.system .actor-icon { border-color: var(--accent3); background: rgba(139,92,246,0.1); }
+
+.usecase-system {
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  position: relative;
+}
+.system-label {
+  position: absolute; top: -12px; left: 16px;
+  background: var(--surface);
+  padding: 0 8px;
+  font-family: var(--mono); font-size: 11px; color: var(--accent);
+}
+.usecase-groups { display: flex; flex-direction: column; gap: 12px; }
+.uc-group-title {
+  font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+  color: var(--text3); text-transform: uppercase; margin-bottom: 6px;
+}
+.uc-items { display: flex; flex-wrap: wrap; gap: 8px; }
+.uc-item {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid;
+  font-size: 11px; font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.uc-item.pos { border-color: var(--accent); color: var(--accent); background: rgba(59,130,246,0.08); }
+.uc-item.acc { border-color: var(--accent3); color: var(--accent3); background: rgba(139,92,246,0.08); }
+.uc-item.log { border-color: var(--success); color: var(--success); background: rgba(16,185,129,0.08); }
+.uc-item:hover { filter: brightness(1.3); transform: scale(1.03); }
+
+/* CLASS DIAGRAM */
+.class-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+.class-box {
+  border: 1px solid var(--border);
+  border-radius: 8px; overflow: hidden;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.class-box:hover { border-color: var(--accent); transform: translateY(-2px); }
+.class-box.acc { border-top: 3px solid var(--accent3); }
+.class-box.log { border-top: 3px solid var(--success); }
+.class-box.pos { border-top: 3px solid var(--accent); }
+.class-header {
+  background: var(--surface2);
+  padding: 8px 14px;
+  display: flex; align-items: center; gap: 8px;
+}
+.class-type {
+  font-family: var(--mono); font-size: 9px; color: var(--text3);
+}
+.class-name { font-size: 13px; font-weight: 700; color: var(--text); }
+.class-attrs {
+  padding: 10px 14px;
+  border-top: 1px dashed var(--border);
+}
+.class-attr {
+  font-family: var(--mono); font-size: 10px; color: var(--text2);
+  margin-bottom: 4px;
+  display: flex; gap: 6px; align-items: center;
+}
+.attr-vis {
+  width: 14px; height: 14px; border-radius: 3px;
+  font-size: 9px; display: flex; align-items: center; justify-content: center; font-weight: 700;
+}
+.vis-pub { background: rgba(16,185,129,0.2); color: var(--success); }
+.vis-pri { background: rgba(239,68,68,0.2); color: var(--danger); }
+.vis-pro { background: rgba(245,158,11,0.2); color: var(--warning); }
+.class-methods {
+  padding: 10px 14px;
+  border-top: 1px dashed var(--border);
+  background: rgba(0,0,0,0.2);
+}
+.class-method { font-family: var(--mono); font-size: 10px; color: var(--accent2); margin-bottom: 3px; }
+
+/* SEQUENCE DIAGRAM */
+.seq-diagram { overflow-x: auto; }
+.seq-actors { display: flex; gap: 0; margin-bottom: 0; }
+.seq-actor-col { flex: 1; min-width: 120px; display: flex; flex-direction: column; align-items: center; }
+.seq-actor-box {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 11px; font-weight: 700;
+  text-align: center;
+  width: 100%; z-index: 2;
+  position: relative;
+}
+.seq-actor-box.pos { border-color: var(--accent); color: var(--accent); }
+.seq-actor-box.log { border-color: var(--success); color: var(--success); }
+.seq-actor-box.acc { border-color: var(--accent3); color: var(--accent3); }
+.seq-actor-box.db { border-color: var(--warning); color: var(--warning); }
+.seq-lifeline {
+  width: 1px; background: var(--border);
+  flex: 1;
+  min-height: 400px;
+}
+
+.seq-messages { margin-top: -400px; padding: 48px 0; }
+.seq-msg {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+  position: relative;
+  min-height: 32px;
+}
+.seq-arrow {
+  flex: 1;
+  height: 1px;
+  position: relative;
+}
+.seq-arrow.solid { border-top: 2px solid var(--accent); }
+.seq-arrow.dashed { border-top: 2px dashed var(--text3); }
+.seq-arrow.ret { border-top: 2px dashed var(--success); }
+.seq-arrow.log-arr { border-top: 2px solid var(--success); }
+.seq-arrow.acc-arr { border-top: 2px solid var(--accent3); }
+.seq-arrow::after {
+  content: '▶';
+  position: absolute; right: -6px; top: -9px;
+  font-size: 11px; color: var(--accent);
+}
+.seq-arrow.ret::after, .seq-arrow.dashed::after { content: '◀'; left: -6px; right: auto; color: var(--text3); }
+.seq-arrow.log-arr::after { color: var(--success); }
+.seq-arrow.acc-arr::after { color: var(--accent3); }
+.seq-label {
+  position: absolute; top: -18px; left: 50%; transform: translateX(-50%);
+  font-size: 10px; color: var(--text2); white-space: nowrap;
+  background: var(--surface);
+  padding: 2px 6px; border-radius: 4px;
+}
+.seq-spacer { flex: 1; }
+.seq-note {
+  margin-left: 12px;
+  padding: 4px 10px;
+  background: rgba(245,158,11,0.1);
+  border: 1px solid var(--warning);
+  border-radius: 4px;
+  font-size: 10px; color: var(--warning);
+  white-space: nowrap;
+}
+
+/* ACTIVITY/FLOW DIAGRAM */
+.flow-diagram {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+}
+.flow-node {
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-size: 12px; font-weight: 600;
+  text-align: center;
+  min-width: 200px;
+}
+.flow-node.start, .flow-node.end {
+  border-radius: 20px;
+  background: var(--accent); color: white;
+  padding: 8px 28px;
+  font-size: 11px;
+}
+.flow-node.end { background: var(--success); }
+.flow-node.action {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.flow-node.decision {
+  background: rgba(245,158,11,0.1);
+  border: 2px solid var(--warning);
+  color: var(--warning);
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  padding: 20px 40px;
+}
+.flow-node.auto {
+  background: rgba(139,92,246,0.1);
+  border: 1px solid var(--accent3);
+  color: var(--accent3);
+}
+.flow-arrow {
+  width: 2px; height: 24px; background: var(--border);
+  position: relative;
+  display: flex; justify-content: center;
+}
+.flow-arrow::after { content: '▼'; position: absolute; bottom: -8px; font-size: 10px; color: var(--text3); }
+.flow-branch {
+  display: flex; gap: 32px; align-items: flex-start;
+}
+.flow-branch-item {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+}
+.flow-branch-label { font-size: 10px; color: var(--text3); }
+
+/* WIREFRAME SCREENS */
+.wf-container { max-width: 1280px; margin: 0 auto; padding: 48px 24px; }
+.wf-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 32px; }
+.wf-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.wf-card-header {
+  background: var(--surface2);
+  padding: 10px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+}
+.wf-card-title { font-size: 12px; font-weight: 700; color: var(--text2); font-family: var(--mono); }
+.wf-card-badge {
+  font-size: 10px; padding: 2px 8px; border-radius: 10px;
+}
+.wf-card-badge.pos { background: rgba(59,130,246,0.2); color: var(--accent); }
+.wf-card-badge.acc { background: rgba(139,92,246,0.2); color: var(--accent3); }
+.wf-card-badge.log { background: rgba(16,185,129,0.2); color: var(--success); }
+.wf-screen { padding: 0; }
+
+/* POS Screen Wireframe */
+.pos-screen {
+  background: #1a2235;
+  min-height: 380px;
+  display: grid;
+  grid-template-columns: 1fr 200px;
+}
+.pos-menu-area { padding: 12px; border-right: 1px solid var(--border); }
+.pos-menu-header {
+  display: flex; gap: 6px; margin-bottom: 12px; overflow-x: auto;
+}
+.pos-cat-btn {
+  padding: 5px 12px; border-radius: 16px;
+  font-size: 10px; font-weight: 600; white-space: nowrap;
+  border: 1px solid var(--border); color: var(--text3);
+}
+.pos-cat-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+.pos-menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.menu-item-wf {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+.menu-item-wf:hover { border-color: var(--accent); }
+.menu-img-wf {
+  height: 40px; border-radius: 4px;
+  background: linear-gradient(135deg, var(--surface2), var(--surface3));
+  margin-bottom: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+.menu-name-wf { font-size: 10px; font-weight: 600; color: var(--text); }
+.menu-price-wf { font-size: 10px; color: var(--accent); font-family: var(--mono); }
+
+.pos-order-panel { padding: 12px; display: flex; flex-direction: column; }
+.order-title { font-size: 11px; font-weight: 700; color: var(--text2); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+.order-items { flex: 1; }
+.order-item-wf {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 6px 0; border-bottom: 1px solid var(--border);
+  font-size: 10px;
+}
+.order-item-qty {
+  background: var(--accent); color: white;
+  width: 18px; height: 18px; border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; font-weight: 700; flex-shrink: 0;
+}
+.order-total {
+  margin-top: 10px; padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+.total-row { display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 4px; }
+.total-row.grand { font-weight: 700; color: var(--accent); font-family: var(--mono); }
+.pay-btn {
+  margin-top: 10px; padding: 8px;
+  background: var(--accent); color: white;
+  border-radius: 6px; font-size: 11px; font-weight: 700;
+  text-align: center; cursor: pointer;
+}
+.pay-btn:hover { background: #2563eb; }
+
+/* Dashboard wireframe */
+.dash-screen {
+  background: #111827;
+  padding: 12px;
+  min-height: 380px;
+}
+.dash-kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
+.kpi-card-wf {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px;
+}
+.kpi-label-wf { font-size: 9px; color: var(--text3); margin-bottom: 4px; }
+.kpi-val-wf { font-family: var(--mono); font-size: 16px; font-weight: 700; }
+.kpi-val-wf.green { color: var(--success); }
+.kpi-val-wf.blue { color: var(--accent); }
+.kpi-val-wf.purple { color: var(--accent3); }
+.kpi-val-wf.orange { color: var(--warning); }
+.kpi-change { font-size: 9px; color: var(--success); }
+.chart-wf {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px;
+  margin-bottom: 8px;
+  height: 100px;
+  display: flex; align-items: flex-end; gap: 4px;
+  overflow: hidden;
+}
+.bar-wf {
+  flex: 1; border-radius: 3px 3px 0 0;
+  background: linear-gradient(to top, var(--accent), rgba(59,130,246,0.4));
+  transition: height 0.3s;
+  cursor: pointer;
+}
+.bar-wf:hover { filter: brightness(1.3); }
+.branch-list-wf { display: flex; flex-direction: column; gap: 4px; }
+.branch-row-wf {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 6px 10px;
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 10px;
+}
+.branch-status { width: 6px; height: 6px; border-radius: 50%; }
+
+/* Inventory wireframe */
+.inv-screen {
+  background: #111827;
+  padding: 12px;
+  min-height: 380px;
+}
+.inv-search-bar {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 10px;
+  display: flex; gap: 8px; align-items: center;
+  margin-bottom: 10px;
+  font-size: 10px; color: var(--text3);
+}
+.inv-table { width: 100%; border-collapse: collapse; font-size: 10px; }
+.inv-table th {
+  text-align: left; padding: 6px 8px;
+  background: var(--surface2); color: var(--text3);
+  font-weight: 600; font-size: 9px; letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--border);
+}
+.inv-table td { padding: 7px 8px; border-bottom: 1px solid rgba(42,58,85,0.5); color: var(--text2); }
+.stock-bar-container { width: 60px; background: var(--surface3); border-radius: 3px; height: 5px; }
+.stock-bar-fill { height: 5px; border-radius: 3px; }
+.stock-ok { background: var(--success); }
+.stock-warn { background: var(--warning); }
+.stock-low { background: var(--danger); }
+.inv-badge {
+  padding: 2px 6px; border-radius: 8px; font-size: 9px; font-weight: 600;
+}
+.inv-badge.ok { background: rgba(16,185,129,0.2); color: var(--success); }
+.inv-badge.warn { background: rgba(245,158,11,0.2); color: var(--warning); }
+.inv-badge.low { background: rgba(239,68,68,0.2); color: var(--danger); }
+
+/* COA wireframe */
+.coa-screen {
+  background: #111827;
+  padding: 12px;
+  min-height: 380px;
+}
+.coa-filters { display: flex; gap: 6px; margin-bottom: 10px; }
+.coa-filter-btn {
+  padding: 4px 10px; border-radius: 4px;
+  font-size: 10px; border: 1px solid var(--border);
+  color: var(--text3); cursor: pointer;
+}
+.coa-filter-btn.active { background: var(--accent3); color: white; border-color: var(--accent3); }
+.ledger-table { width: 100%; border-collapse: collapse; font-size: 10px; }
+.ledger-table th {
+  padding: 6px 8px; background: var(--surface2);
+  color: var(--text3); font-size: 9px; text-align: right;
+  border-bottom: 1px solid var(--border);
+}
+.ledger-table th:first-child, .ledger-table th:nth-child(2) { text-align: left; }
+.ledger-table td {
+  padding: 6px 8px; border-bottom: 1px solid rgba(42,58,85,0.5);
+  color: var(--text2); text-align: right;
+}
+.ledger-table td:first-child { color: var(--text3); font-family: var(--mono); font-size: 9px; text-align: left; }
+.ledger-table td:nth-child(2) { color: var(--text); font-weight: 600; text-align: left; }
+.ledger-table tr.group-header td { background: var(--surface2); color: var(--accent3); font-weight: 700; font-size: 9px; text-align: left; }
+.debit-val { color: var(--success) !important; }
+.credit-val { color: var(--danger) !important; }
+.balance-pos { color: var(--success) !important; }
+
+/* PO Screen */
+.po-screen {
+  background: #111827;
+  padding: 12px;
+  min-height: 380px;
+}
+.po-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px;
+  margin-bottom: 8px;
+}
+.po-card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.po-id { font-family: var(--mono); font-size: 11px; color: var(--accent2); font-weight: 700; }
+.po-status {
+  padding: 2px 8px; border-radius: 8px; font-size: 9px; font-weight: 700;
+}
+.po-status.pending { background: rgba(245,158,11,0.2); color: var(--warning); }
+.po-status.approved { background: rgba(16,185,129,0.2); color: var(--success); }
+.po-status.sent { background: rgba(59,130,246,0.2); color: var(--accent); }
+.po-supplier { font-size: 11px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.po-meta { font-size: 10px; color: var(--text3); }
+.po-items-preview { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 8px; }
+.po-item-tag {
+  padding: 2px 8px; border-radius: 10px;
+  background: var(--surface2); border: 1px solid var(--border);
+  font-size: 9px; color: var(--text2);
+}
+.po-total-row { display: flex; justify-content: space-between; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border); }
+.po-total-val { font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--accent); }
+.po-actions { display: flex; gap: 4px; }
+.po-btn { padding: 4px 10px; border-radius: 4px; font-size: 9px; font-weight: 700; cursor: pointer; border: none; }
+.po-btn.approve { background: var(--success); color: white; }
+.po-btn.reject { background: rgba(239,68,68,0.2); color: var(--danger); border: 1px solid var(--danger); }
+.po-btn.view { background: var(--surface2); color: var(--text2); border: 1px solid var(--border); }
+
+/* GRID UTILITIES */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
+@media(max-width: 768px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } .usecase-diagram { grid-template-columns: 1fr; } }
+
+.divider { height: 1px; background: var(--border); margin: 48px 0; }
+
+.info-banner {
+  background: rgba(59,130,246,0.08);
+  border: 1px solid rgba(59,130,246,0.3);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 12px;
+  color: var(--text2);
+  margin-bottom: 24px;
+  display: flex; gap: 10px; align-items: flex-start;
+}
+.info-icon { font-size: 16px; flex-shrink: 0; }
+
+/* ERD */
+.erd-container { display: flex; flex-direction: column; align-items: center; }
+.erd-row { display: flex; gap: 24px; align-items: flex-start; justify-content: center; flex-wrap: wrap; margin-bottom: 16px; }
+.erd-entity {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  min-width: 160px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.erd-entity:hover { border-color: var(--accent); }
+.erd-entity-header {
+  padding: 8px 14px;
+  font-size: 12px; font-weight: 700;
+  text-align: center;
+}
+.erd-entity-header.pos { background: rgba(59,130,246,0.2); color: var(--accent); border-bottom: 1px solid rgba(59,130,246,0.3); }
+.erd-entity-header.acc { background: rgba(139,92,246,0.2); color: var(--accent3); border-bottom: 1px solid rgba(139,92,246,0.3); }
+.erd-entity-header.log { background: rgba(16,185,129,0.2); color: var(--success); border-bottom: 1px solid rgba(16,185,129,0.3); }
+.erd-attrs { padding: 8px 14px; }
+.erd-attr {
+  font-family: var(--mono); font-size: 10px; color: var(--text2);
+  margin-bottom: 3px; display: flex; align-items: center; gap: 6px;
+}
+.pk-badge { background: rgba(245,158,11,0.2); color: var(--warning); font-size: 8px; padding: 1px 4px; border-radius: 3px; font-weight: 700; }
+.fk-badge { background: rgba(59,130,246,0.2); color: var(--accent); font-size: 8px; padding: 1px 4px; border-radius: 3px; font-weight: 700; }
+
+.rel-line {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 10px; color: var(--text3);
+  margin: 4px 0;
+  font-family: var(--mono);
+}
+.rel-badge {
+  background: var(--surface2); border: 1px solid var(--border);
+  padding: 2px 8px; border-radius: 10px; font-size: 9px; color: var(--text2);
+}
+
+.legend {
+  display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 16px;
+}
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text2); }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+</style>
+</head>
+<body>
+
+<!-- WATERMARK OVERLAY (diagonal) -->
+<div class="watermark-overlay"></div>
+
+<!-- WATERMARK FIXED BADGE -->
+<div class="watermark-fixed">
+  <div class="watermark-pill">
+    <div class="watermark-icon">©</div>
+    <span class="watermark-text">Property Of ~MAyx</span>
+  </div>
+  <div class="watermark-sub">ALL RIGHTS RESERVED</div>
+</div>
+
+<!-- ACCESS FORBIDDEN OVERLAY -->
+<div id="forbidden-overlay">
+  <div class="forbidden-card">
+    <span class="forbidden-icon">🚫</span>
+    <div class="forbidden-title">ACCESS FORBIDDEN</div>
+    <div class="forbidden-sub">Tindakan ini tidak diizinkan.<br>Konten ini dilindungi hak cipta.</div>
+    <div class="forbidden-sub" style="font-size:11px;margin-top:4px;color:#64748b;">Inspecting or copying source code is prohibited.</div>
+    <div class="forbidden-brand">Property Of ~MAyx</div>
+    <br>
+    <button class="forbidden-close" onclick="closeForbidden()">✕ &nbsp;TUTUP</button>
+  </div>
+</div>
+
+<nav class="top-nav">
+  <div class="nav-logo">POS<span>/</span>BAKSO <span>v1.0</span></div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showScreen('overview', event)">Overview</button>
+    <button class="nav-tab" onclick="showScreen('usecase', event)">Use Case</button>
+    <button class="nav-tab" onclick="showScreen('class', event)">Class Diagram</button>
+    <button class="nav-tab" onclick="showScreen('erd', event)">ERD</button>
+    <button class="nav-tab" onclick="showScreen('sequence', event)">Sequence</button>
+    <button class="nav-tab" onclick="showScreen('activity', event)">Activity</button>
+    <button class="nav-tab" onclick="showScreen('wireframes', event)">Wireframes</button>
+  </div>
+</nav>
+
+<div class="main">
+
+<!-- OVERVIEW SCREEN -->
+<div id="screen-overview" class="screen active">
+  <div class="hero">
+    <div class="hero-badge">SISTEM DESAIN v1.0 — 2026</div>
+    <h1>Rancangan Desain Sistem POS<br>Bakso Multi-Cabang</h1>
+    <p>Analisis desain lengkap meliputi UML (Use Case, Class, ERD, Sequence, Activity) dan wireframe interaktif untuk semua modul sistem.</p>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num">3</div><div class="stat-label">DOMAIN UTAMA</div></div>
+      <div class="stat"><div class="stat-num">18</div><div class="stat-label">KELAS ENTITAS</div></div>
+      <div class="stat"><div class="stat-num">5</div><div class="stat-label">DIAGRAM UML</div></div>
+      <div class="stat"><div class="stat-num">5</div><div class="stat-label">WIREFRAME LAYAR</div></div>
+    </div>
+  </div>
+
+  <div class="section-wrap">
+    <div class="section-title">ARSITEKTUR SISTEM</div>
+    <div class="section-heading">Tiga Domain Terintegrasi</div>
+
+    <div class="grid-3">
+      <div class="uml-container">
+        <div class="uml-header">
+          <div class="uml-header-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+          <div class="uml-title" style="color:var(--accent)">// MODUL POS</div>
+        </div>
+        <div class="uml-body" style="padding:16px;">
+          <div style="font-size:11px;color:var(--text2);margin-bottom:10px;">Modul transaksi penjualan real-time per cabang dengan dukungan offline-first.</div>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <div class="uc-item pos" style="font-size:10px;">🧾 Transaksi Penjualan</div>
+            <div class="uc-item pos" style="font-size:10px;">💳 Multi-Payment (QRIS, EDC)</div>
+            <div class="uc-item pos" style="font-size:10px;">🪑 Manajemen Meja</div>
+            <div class="uc-item pos" style="font-size:10px;">👤 Loyalitas Pelanggan</div>
+            <div class="uc-item pos" style="font-size:10px;">🖨️ Cetak Struk Digital</div>
+          </div>
+        </div>
+      </div>
+      <div class="uml-container">
+        <div class="uml-header">
+          <div class="uml-header-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+          <div class="uml-title" style="color:var(--accent3)">// MODUL AKUNTANSI</div>
+        </div>
+        <div class="uml-body" style="padding:16px;">
+          <div style="font-size:11px;color:var(--text2);margin-bottom:10px;">Chart of Accounts terintegrasi dengan jurnal otomatis dari setiap transaksi POS.</div>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <div class="uc-item acc" style="font-size:10px;">📊 Chart of Accounts</div>
+            <div class="uc-item acc" style="font-size:10px;">📝 Jurnal Otomatis</div>
+            <div class="uc-item acc" style="font-size:10px;">📈 Laporan Keuangan</div>
+            <div class="uc-item acc" style="font-size:10px;">🏛️ Konsolidasi Multi-Cabang</div>
+            <div class="uc-item acc" style="font-size:10px;">🧾 e-Faktur Pajak</div>
+          </div>
+        </div>
+      </div>
+      <div class="uml-container">
+        <div class="uml-header">
+          <div class="uml-header-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+          <div class="uml-title" style="color:var(--success)">// MODUL LOGISTIK</div>
+        </div>
+        <div class="uml-body" style="padding:16px;">
+          <div style="font-size:11px;color:var(--text2);margin-bottom:10px;">Manajemen bahan baku dari supplier hingga distribusi ke cabang dengan BOM deduction.</div>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <div class="uc-item log" style="font-size:10px;">📦 Inventory FIFO/FEFO</div>
+            <div class="uc-item log" style="font-size:10px;">🛒 Purchase Order</div>
+            <div class="uc-item log" style="font-size:10px;">🚚 Distribusi Cabang</div>
+            <div class="uc-item log" style="font-size:10px;">⚙️ BOM Auto-Deduction</div>
+            <div class="uc-item log" style="font-size:10px;">⚠️ Alert Stok Minimum</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-title">ALUR INTEGRASI DATA</div>
+    <div class="section-heading">Event-Driven Integration Flow</div>
+
+    <div class="uml-container">
+      <div class="uml-header">
+        <div class="uml-header-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+        <div class="uml-title">// INTEGRATION FLOW DIAGRAM</div>
+      </div>
+      <div class="uml-body">
+        <div style="display:flex;align-items:center;gap:0;overflow-x:auto;padding:8px 0;">
+          <div style="text-align:center;min-width:120px;">
+            <div style="background:rgba(59,130,246,0.15);border:2px solid var(--accent);border-radius:8px;padding:12px 8px;font-size:11px;font-weight:700;color:var(--accent)">🧾<br>KASIR POS</div>
+            <div style="font-size:9px;color:var(--text3);margin-top:4px;">Input Transaksi</div>
+          </div>
+          <div style="flex:1;min-width:60px;text-align:center;position:relative;">
+            <div style="height:2px;background:linear-gradient(90deg,var(--accent),var(--accent3));margin:0 4px;"></div>
+            <div style="font-size:9px;color:var(--text3);margin-top:4px;">Event: sale.completed</div>
+          </div>
+          <div style="text-align:center;min-width:130px;">
+            <div style="background:rgba(139,92,246,0.15);border:2px solid var(--accent3);border-radius:8px;padding:12px 8px;font-size:11px;font-weight:700;color:var(--accent3)">⚡<br>EVENT BUS</div>
+            <div style="font-size:9px;color:var(--text3);margin-top:4px;">Message Broker</div>
+          </div>
+          <div style="flex:1;min-width:60px;display:flex;flex-direction:column;gap:24px;align-items:center;padding:0 8px;">
+            <div style="display:flex;flex-direction:column;gap:4px;width:100%;">
+              <div style="height:1px;background:var(--accent3);"></div>
+              <div style="height:1px;background:var(--success);"></div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px;min-width:140px;">
+            <div style="background:rgba(139,92,246,0.1);border:1px solid var(--accent3);border-radius:6px;padding:8px;font-size:10px;color:var(--accent3);text-align:center;">📊 Accounting Service<br><span style="color:var(--text3);font-size:9px;">Buat Jurnal Otomatis</span></div>
+            <div style="background:rgba(16,185,129,0.1);border:1px solid var(--success);border-radius:6px;padding:8px;font-size:10px;color:var(--success);text-align:center;">📦 Logistics Service<br><span style="color:var(--text3);font-size:9px;">BOM Deduction Stok</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- USE CASE SCREEN -->
+<div id="screen-usecase" class="screen">
+  <div class="section-wrap">
+    <div class="section-title">UML DIAGRAM 1/5</div>
+    <div class="section-heading">Use Case Diagram — Sistem POS Bakso</div>
+    <div class="info-banner">
+      <span class="info-icon">ℹ️</span>
+      Diagram ini menggambarkan interaksi antara aktor (pengguna dan sistem eksternal) dengan fungsionalitas sistem. Hover pada use case untuk melihat detail.
+    </div>
+
+    <div class="uml-container">
+      <div class="uml-header">
+        <div class="uml-header-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+        <div class="uml-title">// USE CASE DIAGRAM — POS BAKSO MULTI-CABANG</div>
+      </div>
+      <div class="uml-body">
+        <div class="usecase-diagram">
+          <div class="actor-col">
+            <div class="actor"><div class="actor-icon">👨‍💼</div><div class="actor-name">Owner / Direktur</div></div>
+            <div class="actor"><div class="actor-icon">💰</div><div class="actor-name">Finance Manager</div></div>
+            <div class="actor"><div class="actor-icon">🏪</div><div class="actor-name">Manajer Cabang</div></div>
+            <div class="actor"><div class="actor-icon">👨‍🍳</div><div class="actor-name">Kepala Dapur</div></div>
+            <div class="actor"><div class="actor-icon">🧑‍💻</div><div class="actor-name">Kasir</div></div>
+          </div>
+          <div class="usecase-system">
+            <div class="system-label">«system» Sistem POS Bakso Terintegrasi</div>
+            <div class="usecase-groups">
+              <div>
+                <div class="uc-group-title">📦 POS & Penjualan</div>
+                <div class="uc-items">
+                  <div class="uc-item pos">Buat Transaksi</div>
+                  <div class="uc-item pos">Proses Pembayaran</div>
+                  <div class="uc-item pos">Cetak Struk</div>
+                  <div class="uc-item pos">Manajemen Shift</div>
+                  <div class="uc-item pos">Kelola Meja</div>
+                  <div class="uc-item pos">Kelola Menu</div>
+                  <div class="uc-item pos">Program Loyalitas</div>
+                  <div class="uc-item pos">Void Transaksi</div>
+                </div>
+              </div>
+              <div>
+                <div class="uc-group-title">📊 Akuntansi & Keuangan</div>
+                <div class="uc-items">
+                  <div class="uc-item acc">Lihat Laporan Keuangan</div>
+                  <div class="uc-item acc">Koreksi Jurnal</div>
+                  <div class="uc-item acc">Export e-Faktur</div>
+                  <div class="uc-item acc">Rekonsiliasi Bank</div>
+                  <div class="uc-item acc">Konsolidasi Cabang</div>
+                </div>
+              </div>
+              <div>
+                <div class="uc-group-title">🚚 Logistik & Inventory</div>
+                <div class="uc-items">
+                  <div class="uc-item log">Buat Purchase Request</div>
+                  <div class="uc-item log">Approve Purchase Order</div>
+                  <div class="uc-item log">Input GRN</div>
+                  <div class="uc-item log">Monitor Stok</div>
+                  <div class="uc-item log">Stock Opname</div>
+                  <div class="uc-item log">Transfer Antar Cabang</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="actor-col">
+            <div class="actor supplier"><div class="actor-icon" style="border-color:var(--success)">🏭</div><div class="actor-name">Supplier</div></div>
+            <div class="actor system"><div class="actor-icon" style="border-color:var(--accent3)">💳</div><div class="actor-name">Payment Gateway (QRIS)</div></div>
+            <div class="actor system"><div class="actor-icon" style="border-color:var(--accent3)">🛵</div><div class="actor-name">GrabFood / GoFood</div></div>
+            <div class="actor system"><div class="actor-icon" style="border-color:var(--warning)">🏛️</div><div class="actor-name">DJP / e-Faktur</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CLASS DIAGRAM SCREEN -->
+<div id="screen-class" class="screen">
+  <div class="section-wrap">
+    <div class="section-title">UML DIAGRAM 2/5</div>
+    <div class="section-heading">Class Diagram — Entitas Utama Sistem</div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div> Modul POS</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--accent3)"></div> Modul Akuntansi</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--success)"></div> Modul Logistik</div>
+    </div>
+    <div class="uml-container">
+      <div class="uml-header">
+        <div class="uml-header-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+        <div class="uml-title">// CLASS DIAGRAM — SIMPLIFIED</div>
+      </div>
+      <div class="uml-body">
+        <div class="class-grid">
+          <div class="class-box pos">
+            <div class="class-header"><div><div class="class-type">«entity»</div><div class="class-name">Transaction</div></div></div>
+            <div class="class-attrs">
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>id: UUID</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>branchId: UUID</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>cashierId: UUID</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>totalAmount: Decimal</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>paymentMethod: Enum</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>status: Enum</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>createdAt: DateTime</div>
+            </div>
+            <div class="class-methods">
+              <div class="class-method">+ processPayment(method)</div>
+              <div class="class-method">+ voidTransaction(reason)</div>
+              <div class="class-method">+ generateReceipt()</div>
+            </div>
+          </div>
+          <div class="class-box pos">
+            <div class="class-header"><div><div class="class-type">«entity»</div><div class="class-name">TransactionItem</div></div></div>
+            <div class="class-attrs">
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>id: UUID</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>transactionId: UUID</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>productId: UUID</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>quantity: Integer</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>unitPrice: Decimal</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>discount: Decimal</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>notes: String</div>
+            </div>
+            <div class="class-methods">
+              <div class="class-method">+ calculateSubtotal()</div>
+              <div class="class-method">+ applyDiscount(code)</div>
+            </div>
+          </div>
+          <div class="class-box pos">
+            <div class="class-header"><div><div class="class-type">«entity»</div><div class="class-name">Product</div></div></div>
+            <div class="class-attrs">
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>id: UUID</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>name: String</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>categoryId: UUID</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>basePrice: Decimal</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>isActive: Boolean</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>imageUrl: String</div>
+            </div>
+            <div class="class-methods">
+              <div class="class-method">+ getPriceForBranch(branchId)</div>
+              <div class="class-method">+ getBOM(): List&lt;BOMItem&gt;</div>
+              <div class="class-method">+ toggleActive()</div>
+            </div>
+          </div>
+          <div class="class-box acc">
+            <div class="class-header"><div><div class="class-type">«entity»</div><div class="class-name">JournalEntry</div></div></div>
+            <div class="class-attrs">
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>id: UUID</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>sourceType: Enum</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>sourceId: UUID</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>journalDate: Date</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>description: String</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>branchId: UUID</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>isPosted: Boolean</div>
+            </div>
+            <div class="class-methods">
+              <div class="class-method">+ post()</div>
+              <div class="class-method">+ reverse(reason)</div>
+              <div class="class-method">+ validate()</div>
+            </div>
+          </div>
+          <div class="class-box acc">
+            <div class="class-header"><div><div class="class-type">«entity»</div><div class="class-name">Account (CoA)</div></div></div>
+            <div class="class-attrs">
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>code: String(6)</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>name: String</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>type: Enum</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>normalBalance: Enum</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>parentCode: String</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>isActive: Boolean</div>
+            </div>
+            <div class="class-methods">
+              <div class="class-method">+ getBalance(period)</div>
+              <div class="class-method">+ getSubAccounts()</div>
+            </div>
+          </div>
+          <div class="class-box log">
+            <div class="class-header"><div><div class="class-type">«entity»</div><div class="class-name">Inventory</div></div></div>
+            <div class="class-attrs">
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>id: UUID</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>materialId: UUID</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>locationId: UUID</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>quantity: Decimal</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>unit: String</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>expiryDate: Date</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>batchNumber: String</div>
+            </div>
+            <div class="class-methods">
+              <div class="class-method">+ deduct(qty, bomRef)</div>
+              <div class="class-method">+ checkAlerts()</div>
+              <div class="class-method">+ applyFEFO()</div>
+            </div>
+          </div>
+          <div class="class-box log">
+            <div class="class-header"><div><div class="class-type">«entity»</div><div class="class-name">PurchaseOrder</div></div></div>
+            <div class="class-attrs">
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>id: UUID</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>supplierId: UUID</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>status: Enum</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>totalValue: Decimal</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>deliveryDate: Date</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>approvedBy: UUID</div>
+            </div>
+            <div class="class-methods">
+              <div class="class-method">+ approve(userId)</div>
+              <div class="class-method">+ sendToSupplier()</div>
+              <div class="class-method">+ receiveGRN()</div>
+            </div>
+          </div>
+          <div class="class-box log">
+            <div class="class-header"><div><div class="class-type">«entity»</div><div class="class-name">BillOfMaterial</div></div></div>
+            <div class="class-attrs">
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>id: UUID</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>productId: UUID</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>materialId: UUID</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>quantityPerUnit: Decimal</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>unit: String</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>wastePercentage: Float</div>
+            </div>
+            <div class="class-methods">
+              <div class="class-method">+ calculateUsage(qty)</div>
+              <div class="class-method">+ getTotalCost()</div>
+            </div>
+          </div>
+          <div class="class-box pos">
+            <div class="class-header"><div><div class="class-type">«entity»</div><div class="class-name">Branch</div></div></div>
+            <div class="class-attrs">
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>id: UUID</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>name: String</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>address: String</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>costCenterCode: String</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>isActive: Boolean</div>
+              <div class="class-attr"><div class="attr-vis vis-pri">-</div>timezone: String</div>
+            </div>
+            <div class="class-methods">
+              <div class="class-method">+ getDailySales(date)</div>
+              <div class="class-method">+ getInventoryStatus()</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ERD SCREEN -->
+<div id="screen-erd" class="screen">
+  <div class="section-wrap">
+    <div class="section-title">UML DIAGRAM 3/5</div>
+    <div class="section-heading">Entity Relationship Diagram (ERD)</div>
+    <div class="info-banner">
+      <span class="info-icon">🔗</span>
+      ERD menggambarkan hubungan antar tabel dalam database. PK = Primary Key, FK = Foreign Key. Relasi one-to-many (1:N) dan many-to-many (M:N) ditandai dengan notasi Crow's Foot.
+    </div>
+    <div class="uml-container">
+      <div class="uml-header">
+        <div class="uml-header-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+        <div class="uml-title">// ENTITY RELATIONSHIP DIAGRAM</div>
+      </div>
+      <div class="uml-body">
+        <div class="erd-container">
+          <div class="erd-row">
+            <div class="erd-entity">
+              <div class="erd-entity-header pos">BRANCH</div>
+              <div class="erd-attrs">
+                <div class="erd-attr"><span class="pk-badge">PK</span> id: UUID</div>
+                <div class="erd-attr">name: VARCHAR(100)</div>
+                <div class="erd-attr">address: TEXT</div>
+                <div class="erd-attr">cost_center_code: CHAR(6)</div>
+                <div class="erd-attr">is_active: BOOLEAN</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;flex-direction:column;justify-content:center;gap:4px;">
+              <div class="rel-line"><div class="rel-badge">1</div>─────<div class="rel-badge">N</div></div>
+              <div style="font-size:9px;color:var(--text3)">memiliki</div>
+            </div>
+            <div class="erd-entity">
+              <div class="erd-entity-header pos">TRANSACTION</div>
+              <div class="erd-attrs">
+                <div class="erd-attr"><span class="pk-badge">PK</span> id: UUID</div>
+                <div class="erd-attr"><span class="fk-badge">FK</span> branch_id: UUID</div>
+                <div class="erd-attr"><span class="fk-badge">FK</span> cashier_id: UUID</div>
+                <div class="erd-attr">total_amount: DECIMAL</div>
+                <div class="erd-attr">payment_method: ENUM</div>
+                <div class="erd-attr">status: ENUM</div>
+                <div class="erd-attr">created_at: TIMESTAMP</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;flex-direction:column;justify-content:center;gap:4px;">
+              <div class="rel-line"><div class="rel-badge">1</div>─────<div class="rel-badge">N</div></div>
+              <div style="font-size:9px;color:var(--text3)">berisi</div>
+            </div>
+            <div class="erd-entity">
+              <div class="erd-entity-header pos">TRANSACTION_ITEM</div>
+              <div class="erd-attrs">
+                <div class="erd-attr"><span class="pk-badge">PK</span> id: UUID</div>
+                <div class="erd-attr"><span class="fk-badge">FK</span> transaction_id: UUID</div>
+                <div class="erd-attr"><span class="fk-badge">FK</span> product_id: UUID</div>
+                <div class="erd-attr">quantity: INTEGER</div>
+                <div class="erd-attr">unit_price: DECIMAL</div>
+                <div class="erd-attr">discount: DECIMAL</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:80px;justify-content:center;margin:4px 0;">
+            <div style="display:flex;flex-direction:column;align-items:center;">
+              <div style="width:1px;height:20px;background:var(--border)"></div>
+              <div style="font-size:9px;color:var(--text3)">1:N</div>
+              <div style="width:1px;height:20px;background:var(--border)"></div>
+            </div>
+            <div style="width:200px"></div>
+            <div style="display:flex;flex-direction:column;align-items:center;">
+              <div style="width:1px;height:20px;background:var(--border)"></div>
+              <div style="font-size:9px;color:var(--text3)">N:1</div>
+              <div style="width:1px;height:20px;background:var(--border)"></div>
+            </div>
+          </div>
+
+          <div class="erd-row">
+            <div class="erd-entity">
+              <div class="erd-entity-header acc">JOURNAL_ENTRY</div>
+              <div class="erd-attrs">
+                <div class="erd-attr"><span class="pk-badge">PK</span> id: UUID</div>
+                <div class="erd-attr"><span class="fk-badge">FK</span> branch_id: UUID</div>
+                <div class="erd-attr">source_type: ENUM</div>
+                <div class="erd-attr">source_id: UUID</div>
+                <div class="erd-attr">journal_date: DATE</div>
+                <div class="erd-attr">is_posted: BOOLEAN</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;flex-direction:column;justify-content:center;gap:4px;">
+              <div class="rel-line"><div class="rel-badge">1</div>─────<div class="rel-badge">N</div></div>
+              <div style="font-size:9px;color:var(--text3)">memiliki</div>
+            </div>
+            <div class="erd-entity">
+              <div class="erd-entity-header acc">JOURNAL_LINE</div>
+              <div class="erd-attrs">
+                <div class="erd-attr"><span class="pk-badge">PK</span> id: UUID</div>
+                <div class="erd-attr"><span class="fk-badge">FK</span> journal_id: UUID</div>
+                <div class="erd-attr"><span class="fk-badge">FK</span> account_code: CHAR(6)</div>
+                <div class="erd-attr">debit: DECIMAL</div>
+                <div class="erd-attr">credit: DECIMAL</div>
+                <div class="erd-attr">description: TEXT</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;flex-direction:column;justify-content:center;gap:4px;">
+              <div class="rel-line"><div class="rel-badge">N</div>─────<div class="rel-badge">1</div></div>
+              <div style="font-size:9px;color:var(--text3)">merujuk</div>
+            </div>
+            <div class="erd-entity">
+              <div class="erd-entity-header acc">ACCOUNT (CoA)</div>
+              <div class="erd-attrs">
+                <div class="erd-attr"><span class="pk-badge">PK</span> code: CHAR(6)</div>
+                <div class="erd-attr">name: VARCHAR(100)</div>
+                <div class="erd-attr">type: ENUM</div>
+                <div class="erd-attr">normal_balance: ENUM</div>
+                <div class="erd-attr">parent_code: CHAR(6)</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:80px;justify-content:center;margin:4px 0;">
+            <div style="width:200px"></div>
+            <div style="display:flex;flex-direction:column;align-items:center;">
+              <div style="width:1px;height:20px;background:var(--border)"></div>
+              <div style="font-size:9px;color:var(--text3)">1:N</div>
+              <div style="width:1px;height:20px;background:var(--border)"></div>
+            </div>
+            <div style="width:200px"></div>
+          </div>
+
+          <div class="erd-row">
+            <div class="erd-entity">
+              <div class="erd-entity-header log">MATERIAL</div>
+              <div class="erd-attrs">
+                <div class="erd-attr"><span class="pk-badge">PK</span> id: UUID</div>
+                <div class="erd-attr">name: VARCHAR(100)</div>
+                <div class="erd-attr">category: ENUM</div>
+                <div class="erd-attr">unit: VARCHAR(20)</div>
+                <div class="erd-attr">is_perishable: BOOLEAN</div>
+                <div class="erd-attr">min_stock: DECIMAL</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;flex-direction:column;justify-content:center;gap:4px;">
+              <div class="rel-line"><div class="rel-badge">1</div>─────<div class="rel-badge">N</div></div>
+              <div style="font-size:9px;color:var(--text3)">track di</div>
+            </div>
+            <div class="erd-entity">
+              <div class="erd-entity-header log">INVENTORY_BATCH</div>
+              <div class="erd-attrs">
+                <div class="erd-attr"><span class="pk-badge">PK</span> id: UUID</div>
+                <div class="erd-attr"><span class="fk-badge">FK</span> material_id: UUID</div>
+                <div class="erd-attr"><span class="fk-badge">FK</span> location_id: UUID</div>
+                <div class="erd-attr">quantity: DECIMAL</div>
+                <div class="erd-attr">expiry_date: DATE</div>
+                <div class="erd-attr">batch_number: VARCHAR</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;flex-direction:column;justify-content:center;gap:4px;">
+              <div class="rel-line"><div class="rel-badge">N</div>─────<div class="rel-badge">1</div></div>
+              <div style="font-size:9px;color:var(--text3)">di lokasi</div>
+            </div>
+            <div class="erd-entity">
+              <div class="erd-entity-header log">STOCK_LOCATION</div>
+              <div class="erd-attrs">
+                <div class="erd-attr"><span class="pk-badge">PK</span> id: UUID</div>
+                <div class="erd-attr">name: VARCHAR(100)</div>
+                <div class="erd-attr">type: ENUM</div>
+                <div class="erd-attr"><span class="fk-badge">FK</span> branch_id: UUID</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="text-align:center;margin-top:16px;display:flex;gap:24px;justify-content:center;flex-wrap:wrap;">
+            <div style="font-size:10px;color:var(--text3);display:flex;gap:8px;align-items:center;"><span style="color:var(--warning);font-weight:700;">PK</span> = Primary Key</div>
+            <div style="font-size:10px;color:var(--text3);display:flex;gap:8px;align-items:center;"><span style="color:var(--accent);font-weight:700;">FK</span> = Foreign Key</div>
+            <div style="font-size:10px;color:var(--text3);">1:N = One to Many &nbsp;|&nbsp; M:N = Many to Many</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SEQUENCE DIAGRAM SCREEN -->
+<div id="screen-sequence" class="screen">
+  <div class="section-wrap">
+    <div class="section-title">UML DIAGRAM 4/5</div>
+    <div class="section-heading">Sequence Diagram — Alur Transaksi Penjualan</div>
+    <div class="info-banner">
+      <span class="info-icon">⚡</span>
+      Diagram urutan ini menggambarkan interaksi objek dalam alur transaksi penjualan dari kasir klik bayar hingga stok terpotong dan jurnal akuntansi terbuat otomatis.
+    </div>
+    <div class="uml-container">
+      <div class="uml-header">
+        <div class="uml-header-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+        <div class="uml-title">// SEQUENCE DIAGRAM: Proses Transaksi Penjualan End-to-End</div>
+      </div>
+      <div class="uml-body">
+        <div class="seq-diagram">
+          <div class="seq-actors">
+            <div class="seq-actor-col"><div class="seq-actor-box pos">👨‍💻 KASIR</div></div>
+            <div class="seq-actor-col"><div class="seq-actor-box pos">📱 POS APP</div></div>
+            <div class="seq-actor-col"><div class="seq-actor-box db">💳 PAYMENT GW</div></div>
+            <div class="seq-actor-col"><div class="seq-actor-box log">📦 LOGISTICS SVC</div></div>
+            <div class="seq-actor-col"><div class="seq-actor-box acc">📊 ACCOUNTING SVC</div></div>
+          </div>
+          <div style="padding: 20px 0; position: relative;">
+            <div style="display:flex;margin-bottom:20px;">
+              <div style="width:10%;min-width:80px;text-align:right;padding-right:12px;font-size:9px;color:var(--text3);padding-top:6px;">1</div>
+              <div style="flex:1;background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.2);border-radius:6px;padding:10px 16px;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><span style="font-size:10px;font-weight:700;color:var(--accent)">KASIR → POS APP</span><span style="font-size:9px;color:var(--text3)">: addItem(productId, qty)</span></div>
+                <div style="font-size:10px;color:var(--text2)">Kasir memilih produk dari menu dan memasukkan ke keranjang order. POS App memvalidasi ketersediaan produk dan menghitung subtotal berdasarkan harga cabang.</div>
+              </div>
+            </div>
+            <div style="display:flex;margin-bottom:20px;">
+              <div style="width:10%;min-width:80px;text-align:right;padding-right:12px;font-size:9px;color:var(--text3);padding-top:6px;">2</div>
+              <div style="flex:1;background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.2);border-radius:6px;padding:10px 16px;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><span style="font-size:10px;font-weight:700;color:var(--accent)">KASIR → POS APP</span><span style="font-size:9px;color:var(--text3)">: selectPayment(QRIS)</span></div>
+                <div style="font-size:10px;color:var(--text2)">Kasir memilih metode pembayaran QRIS. POS App meminta payment token ke Payment Gateway.</div>
+              </div>
+            </div>
+            <div style="display:flex;margin-bottom:20px;">
+              <div style="width:10%;min-width:80px;text-align:right;padding-right:12px;font-size:9px;color:var(--text3);padding-top:6px;">3</div>
+              <div style="flex:1;background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.2);border-radius:6px;padding:10px 16px;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><span style="font-size:10px;font-weight:700;color:var(--warning)">POS APP → PAYMENT GW</span><span style="font-size:9px;color:var(--text3)">: createPaymentRequest(amount, txId)</span></div>
+                <div style="font-size:10px;color:var(--text2)">POS App mengirim permintaan pembayaran ke Payment Gateway. Gateway mengembalikan QR Code yang ditampilkan ke pelanggan. Sistem polling status pembayaran setiap 2 detik.</div>
+              </div>
+            </div>
+            <div style="display:flex;margin-bottom:20px;">
+              <div style="width:10%;min-width:80px;text-align:right;padding-right:12px;font-size:9px;color:var(--text3);padding-top:6px;">4</div>
+              <div style="flex:1;background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.2);border-radius:6px;padding:10px 16px;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><span style="font-size:10px;font-weight:700;color:var(--warning)">PAYMENT GW → POS APP</span><span style="font-size:9px;color:var(--text3)">: webhook paymentSuccess(txId, refNo)</span></div>
+                <div style="font-size:10px;color:var(--text2)">Payment Gateway mengirim webhook konfirmasi pembayaran berhasil dengan nomor referensi. POS App mengupdate status transaksi menjadi PAID.</div>
+              </div>
+            </div>
+            <div style="display:flex;margin-bottom:20px;">
+              <div style="width:10%;min-width:80px;text-align:right;padding-right:12px;font-size:9px;color:var(--text3);padding-top:6px;">5</div>
+              <div style="flex:1;background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.2);border-radius:6px;padding:10px 16px;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><span style="font-size:10px;font-weight:700;color:var(--success)">POS APP → LOGISTICS SVC</span><span style="font-size:9px;color:var(--text3)">: event sale.completed(items[])</span></div>
+                <div style="font-size:10px;color:var(--text2)">POS App mempublikasikan event ke Message Bus. Logistics Service menerima event dan memproses BOM deduction: untuk setiap item terjual, kurangi stok bahan baku sesuai formula BOM × quantity. Jalankan FEFO untuk batch yang paling mendekati kedaluwarsa.</div>
+              </div>
+            </div>
+            <div style="display:flex;margin-bottom:20px;">
+              <div style="width:10%;min-width:80px;text-align:right;padding-right:12px;font-size:9px;color:var(--text3);padding-top:6px;">6</div>
+              <div style="flex:1;background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.2);border-radius:6px;padding:10px 16px;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><span style="font-size:10px;font-weight:700;color:var(--success)">LOGISTICS SVC → LOGISTICS SVC</span><span style="font-size:9px;color:var(--text3)">: checkMinimumStock()</span></div>
+                <div style="font-size:10px;color:var(--text2)">Setelah deduction, sistem memeriksa apakah stok mencapai batas minimum. Jika ya, otomatis membuat Purchase Request dan mengirim notifikasi WhatsApp ke kepala dapur.</div>
+              </div>
+            </div>
+            <div style="display:flex;margin-bottom:20px;">
+              <div style="width:10%;min-width:80px;text-align:right;padding-right:12px;font-size:9px;color:var(--text3);padding-top:6px;">7</div>
+              <div style="flex:1;background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.2);border-radius:6px;padding:10px 16px;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><span style="font-size:10px;font-weight:700;color:var(--accent3)">POS APP → ACCOUNTING SVC</span><span style="font-size:9px;color:var(--text3)">: event sale.completed(txData)</span></div>
+                <div style="font-size:10px;color:var(--text2)">Accounting Service menerima event yang sama dan secara otomatis membuat jurnal: Dr. Kas/Piutang QRIS | Cr. Pendapatan + PPN. Sekaligus membuat jurnal HPP: Dr. HPP | Cr. Persediaan (nilai rata-rata FIFO).</div>
+              </div>
+            </div>
+            <div style="display:flex;margin-bottom:20px;">
+              <div style="width:10%;min-width:80px;text-align:right;padding-right:12px;font-size:9px;color:var(--text3);padding-top:6px;">8</div>
+              <div style="flex:1;background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.2);border-radius:6px;padding:10px 16px;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><span style="font-size:10px;font-weight:700;color:var(--accent)">POS APP → KASIR</span><span style="font-size:9px;color:var(--text3)">: printReceipt() + display SUCCESS</span></div>
+                <div style="font-size:10px;color:var(--text2)">Struk dicetak otomatis / dikirim via WhatsApp ke pelanggan. Status meja diupdate. Kasir siap menerima transaksi berikutnya. Total waktu proses: &lt; 3 detik.</div>
+              </div>
+            </div>
+            <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.3);border-radius:6px;padding:10px 16px;font-size:11px;color:var(--success);text-align:center;">
+              ✅ Seluruh alur (pembayaran → stok terpotong → jurnal terbuat) selesai dalam &lt; 5 detik secara asinkron
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ACTIVITY DIAGRAM SCREEN -->
+<div id="screen-activity" class="screen">
+  <div class="section-wrap">
+    <div class="section-title">UML DIAGRAM 5/5</div>
+    <div class="section-heading">Activity Diagram — Alur Purchase Order & Penerimaan Barang</div>
+    <div class="grid-2">
+      <div class="uml-container">
+        <div class="uml-header">
+          <div class="uml-header-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+          <div class="uml-title">// ACTIVITY: Purchase Order Flow</div>
+        </div>
+        <div class="uml-body">
+          <div class="flow-diagram">
+            <div class="flow-node start">● MULAI</div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node auto">⚡ Sistem Deteksi Stok Minimum</div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node action">📋 Buat Purchase Request (PR) Otomatis</div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node action">🔔 Notifikasi WhatsApp ke Kepala Dapur</div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node action">🛒 Bandingkan Harga Multi-Supplier</div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node action">📝 Pilih Supplier & Buat PO Draft</div>
+            <div class="flow-arrow"></div>
+            <div style="padding:12px;background:rgba(245,158,11,0.08);border:2px solid var(--warning);border-radius:8px;font-size:11px;color:var(--warning);font-weight:700;text-align:center;width:200px;">◇ Nilai PO<br><span style="font-size:10px;font-weight:400">≤ atau > limit?</span></div>
+            <div class="flow-arrow" style="opacity:0;height:4px;"></div>
+            <div style="display:flex;gap:24px;align-items:flex-start;justify-content:center;">
+              <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+                <div style="font-size:10px;color:var(--success);">≤ Limit</div>
+                <div class="flow-node action" style="min-width:140px;font-size:10px;">✅ Auto-Approve oleh Manager</div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+                <div style="font-size:10px;color:var(--danger);">> Limit</div>
+                <div class="flow-node action" style="min-width:140px;font-size:10px;">👁️ Manual Approval Owner</div>
+              </div>
+            </div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node action">📤 Kirim PO ke Supplier (Email/WA)</div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node end">● SELESAI (Tunggu GRN)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="uml-container">
+        <div class="uml-header">
+          <div class="uml-header-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+          <div class="uml-title">// ACTIVITY: GRN & Penerimaan Barang</div>
+        </div>
+        <div class="uml-body">
+          <div class="flow-diagram">
+            <div class="flow-node start">● Barang Tiba di Gudang</div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node action">📲 Scan PO Number / Barcode</div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node action">⚖️ Timbang & Hitung Barang Fisik</div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node action">📷 Foto Kondisi Barang & Input GRN</div>
+            <div class="flow-arrow"></div>
+            <div style="padding:12px;background:rgba(245,158,11,0.08);border:2px solid var(--warning);border-radius:8px;font-size:11px;color:var(--warning);font-weight:700;text-align:center;width:200px;">◇ Qty/Kualitas<br><span style="font-size:10px;font-weight:400">Sesuai PO?</span></div>
+            <div class="flow-arrow" style="opacity:0;height:4px;"></div>
+            <div style="display:flex;gap:24px;align-items:flex-start;justify-content:center;">
+              <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+                <div style="font-size:10px;color:var(--success);">Sesuai</div>
+                <div class="flow-node action" style="min-width:140px;font-size:10px;">📦 Update Stok + Batch</div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+                <div style="font-size:10px;color:var(--danger);">Tidak Sesuai</div>
+                <div class="flow-node action" style="min-width:140px;font-size:10px;">↩️ Buat Retur ke Supplier</div>
+              </div>
+            </div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node auto">⚡ 3-Way Matching: PO vs GRN vs Invoice</div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node auto">📊 Jurnal Akuntansi Otomatis:<br><span style="font-size:9px;">Dr.Persediaan | Cr.Hutang</span></div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node end">● SELESAI</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WIREFRAMES SCREEN -->
+<div id="screen-wireframes" class="screen">
+  <div class="wf-container">
+    <div class="section-title">WIREFRAME INTERAKTIF</div>
+    <div class="section-heading">5 Layar Utama Sistem</div>
+    <div class="info-banner">
+      <span class="info-icon">🖥️</span>
+      Wireframe berikut menggambarkan tata letak dan elemen UI setiap layar utama sistem. Elemen bersifat interaktif untuk demonstrasi alur.
+    </div>
+
+    <div class="wf-grid">
+      <!-- 1. POS KASIR -->
+      <div class="wf-card">
+        <div class="wf-card-header">
+          <div class="wf-card-title">WF-01 / LAYAR KASIR POS</div>
+          <div class="wf-card-badge pos">POS</div>
+        </div>
+        <div class="wf-screen">
+          <div class="pos-screen">
+            <div class="pos-menu-area">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                <div style="font-size:10px;color:var(--text3);">🏪 Cabang Pusat | 👤 Budi | 🕐 14:23</div>
+                <div style="font-size:9px;color:var(--success);">● Online</div>
+              </div>
+              <div class="pos-menu-header">
+                <div class="pos-cat-btn active">🍜 Bakso</div>
+                <div class="pos-cat-btn">🥤 Minuman</div>
+                <div class="pos-cat-btn">🍳 Lauk</div>
+                <div class="pos-cat-btn">📦 Paket</div>
+              </div>
+              <div class="pos-menu-grid">
+                <div class="menu-item-wf" onclick="addToOrder('Bakso Spesial','Rp 18.000')">
+                  <div class="menu-img-wf">🍲</div>
+                  <div class="menu-name-wf">Bakso Spesial</div>
+                  <div class="menu-price-wf">Rp 18.000</div>
+                </div>
+                <div class="menu-item-wf" onclick="addToOrder('Bakso Malang','Rp 20.000')">
+                  <div class="menu-img-wf">🥣</div>
+                  <div class="menu-name-wf">Bakso Malang</div>
+                  <div class="menu-price-wf">Rp 20.000</div>
+                </div>
+                <div class="menu-item-wf" onclick="addToOrder('Mie Ayam','Rp 15.000')">
+                  <div class="menu-img-wf">🍜</div>
+                  <div class="menu-name-wf">Mie Ayam</div>
+                  <div class="menu-price-wf">Rp 15.000</div>
+                </div>
+                <div class="menu-item-wf" onclick="addToOrder('Siomay','Rp 8.000')">
+                  <div class="menu-img-wf">🥟</div>
+                  <div class="menu-name-wf">Siomay</div>
+                  <div class="menu-price-wf">Rp 8.000</div>
+                </div>
+                <div class="menu-item-wf" onclick="addToOrder('Bakso Kuah','Rp 12.000')">
+                  <div class="menu-img-wf">🫕</div>
+                  <div class="menu-name-wf">Bakso Kuah</div>
+                  <div class="menu-price-wf">Rp 12.000</div>
+                </div>
+                <div class="menu-item-wf" onclick="addToOrder('Tahu Isi','Rp 5.000')">
+                  <div class="menu-img-wf">🧆</div>
+                  <div class="menu-name-wf">Tahu Isi</div>
+                  <div class="menu-price-wf">Rp 5.000</div>
+                </div>
+              </div>
+            </div>
+            <div class="pos-order-panel">
+              <div class="order-title"><span>🛒 Order #089</span><span style="font-size:9px;color:var(--text3);">Meja 5</span></div>
+              <div class="order-items" id="orderItems">
+                <div class="order-item-wf">
+                  <div class="order-item-qty">2</div>
+                  <div style="flex:1;padding:0 6px;"><div style="font-size:10px;color:var(--text);">Bakso Spesial</div></div>
+                  <div style="font-size:10px;color:var(--text2);font-family:var(--mono);">36K</div>
+                </div>
+                <div class="order-item-wf">
+                  <div class="order-item-qty" style="background:var(--success);">1</div>
+                  <div style="flex:1;padding:0 6px;"><div style="font-size:10px;color:var(--text);">Mie Ayam</div></div>
+                  <div style="font-size:10px;color:var(--text2);font-family:var(--mono);">15K</div>
+                </div>
+              </div>
+              <div class="order-total">
+                <div class="total-row"><span>Subtotal</span><span>51.000</span></div>
+                <div class="total-row"><span>PPN 11%</span><span>5.610</span></div>
+                <div class="total-row grand"><span>TOTAL</span><span>56.610</span></div>
+              </div>
+              <div class="pay-btn" onclick="showPayment()">💳 BAYAR</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. DASHBOARD OWNER -->
+      <div class="wf-card">
+        <div class="wf-card-header">
+          <div class="wf-card-title">WF-02 / DASHBOARD OWNER</div>
+          <div class="wf-card-badge pos">POS + COA</div>
+        </div>
+        <div class="wf-screen">
+          <div class="dash-screen">
+            <div style="font-size:10px;color:var(--text3);margin-bottom:8px;display:flex;justify-content:space-between;">
+              <span>📊 Dashboard — Semua Cabang</span><span>Feb 2026</span>
+            </div>
+            <div class="dash-kpi-grid">
+              <div class="kpi-card-wf"><div class="kpi-label-wf">OMZET HARI INI</div><div class="kpi-val-wf blue">Rp 8,4 Jt</div><div class="kpi-change">↑ 12% vs kemarin</div></div>
+              <div class="kpi-card-wf"><div class="kpi-label-wf">GROSS MARGIN</div><div class="kpi-val-wf green">62,4%</div><div class="kpi-change">↑ 2.1% vs bulan lalu</div></div>
+              <div class="kpi-card-wf"><div class="kpi-label-wf">TOTAL TRANSAKSI</div><div class="kpi-val-wf purple">347</div><div class="kpi-change">↑ 28 transaksi</div></div>
+              <div class="kpi-card-wf"><div class="kpi-label-wf">STOK ALERT</div><div class="kpi-val-wf orange">3 item</div><div class="kpi-change" style="color:var(--warning);">⚠️ Perlu reorder</div></div>
+            </div>
+            <div class="chart-wf" id="salesChart">
+              <div class="bar-wf" style="height:40%;"></div>
+              <div class="bar-wf" style="height:60%;"></div>
+              <div class="bar-wf" style="height:45%;"></div>
+              <div class="bar-wf" style="height:80%;"></div>
+              <div class="bar-wf" style="height:55%;"></div>
+              <div class="bar-wf" style="height:90%;"></div>
+              <div class="bar-wf" style="height:70%;"></div>
+            </div>
+            <div class="branch-list-wf">
+              <div style="font-size:9px;color:var(--text3);margin-bottom:4px;font-weight:700;">STATUS CABANG REAL-TIME</div>
+              <div class="branch-row-wf">
+                <div style="display:flex;align-items:center;gap:6px;"><div class="branch-status" style="background:var(--success)"></div><span>Cabang Pusat - Jakarta Selatan</span></div>
+                <span style="color:var(--success);font-family:var(--mono);font-size:10px;">Rp 2.8 Jt</span>
+              </div>
+              <div class="branch-row-wf">
+                <div style="display:flex;align-items:center;gap:6px;"><div class="branch-status" style="background:var(--success)"></div><span>Cabang Bandung - Dago</span></div>
+                <span style="color:var(--success);font-family:var(--mono);font-size:10px;">Rp 1.9 Jt</span>
+              </div>
+              <div class="branch-row-wf">
+                <div style="display:flex;align-items:center;gap:6px;"><div class="branch-status" style="background:var(--warning)"></div><span>Cabang Surabaya - Darmo</span></div>
+                <span style="color:var(--warning);font-family:var(--mono);font-size:10px;">⚠️ Stok Low</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. INVENTORY -->
+      <div class="wf-card">
+        <div class="wf-card-header">
+          <div class="wf-card-title">WF-03 / MANAJEMEN INVENTORY</div>
+          <div class="wf-card-badge log">LOGISTIK</div>
+        </div>
+        <div class="wf-screen">
+          <div class="inv-screen">
+            <div class="inv-search-bar">
+              <span>🔍</span><span>Cari bahan baku...</span>
+              <div style="margin-left:auto;display:flex;gap:6px;">
+                <div style="padding:3px 8px;background:var(--success);color:white;border-radius:4px;font-size:9px;cursor:pointer;">+ GRN</div>
+                <div style="padding:3px 8px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;font-size:9px;cursor:pointer;">Filter</div>
+              </div>
+            </div>
+            <table class="inv-table">
+              <thead><tr><th>BAHAN BAKU</th><th>STOK</th><th>LEVEL</th><th>EXPIRED</th><th>STATUS</th></tr></thead>
+              <tbody>
+                <tr><td style="color:var(--text);font-weight:600;">Daging Sapi Giling</td><td style="font-family:var(--mono);font-size:10px;">24.5 kg</td><td><div class="stock-bar-container"><div class="stock-bar-fill stock-ok" style="width:82%"></div></div></td><td style="font-size:9px;">24 Feb</td><td><div class="inv-badge ok">OK</div></td></tr>
+                <tr><td style="color:var(--text);font-weight:600;">Tepung Tapioka</td><td style="font-family:var(--mono);font-size:10px;">8.2 kg</td><td><div class="stock-bar-container"><div class="stock-bar-fill stock-warn" style="width:35%"></div></div></td><td style="font-size:9px;">Mar 2026</td><td><div class="inv-badge warn">LOW</div></td></tr>
+                <tr><td style="color:var(--text);font-weight:600;">Daging Ayam</td><td style="font-family:var(--mono);font-size:10px;">2.1 kg</td><td><div class="stock-bar-container"><div class="stock-bar-fill stock-low" style="width:12%"></div></div></td><td style="font-size:9px;">⚠️ 23 Feb</td><td><div class="inv-badge low">KRITIS</div></td></tr>
+                <tr><td style="color:var(--text);font-weight:600;">Sawi Hijau</td><td style="font-family:var(--mono);font-size:10px;">15 ikat</td><td><div class="stock-bar-container"><div class="stock-bar-fill stock-ok" style="width:75%"></div></div></td><td style="font-size:9px;">25 Feb</td><td><div class="inv-badge ok">OK</div></td></tr>
+                <tr><td style="color:var(--text);font-weight:600;">Gas LPG 12Kg</td><td style="font-family:var(--mono);font-size:10px;">3 tabung</td><td><div class="stock-bar-container"><div class="stock-bar-fill stock-warn" style="width:30%"></div></div></td><td style="font-size:9px;">—</td><td><div class="inv-badge warn">LOW</div></td></tr>
+              </tbody>
+            </table>
+            <div style="margin-top:8px;padding:6px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.3);border-radius:4px;font-size:9px;color:var(--danger);">⚠️ 2 item perlu Purchase Request segera — <span style="text-decoration:underline;cursor:pointer;">Buat PO Sekarang</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. PURCHASE ORDER -->
+      <div class="wf-card">
+        <div class="wf-card-header">
+          <div class="wf-card-title">WF-04 / PURCHASE ORDER</div>
+          <div class="wf-card-badge log">LOGISTIK</div>
+        </div>
+        <div class="wf-screen">
+          <div class="po-screen">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+              <div style="font-size:11px;font-weight:700;color:var(--text);">Purchase Orders</div>
+              <div style="padding:4px 10px;background:var(--success);color:white;border-radius:4px;font-size:9px;font-weight:700;cursor:pointer;">+ Buat PO</div>
+            </div>
+            <div class="po-card">
+              <div class="po-card-top">
+                <div><div class="po-id">PO-2026-0287</div><div class="po-supplier">CV. Daging Segar Prima</div><div class="po-meta">22 Feb 2026 · Cabang Jakarta</div></div>
+                <div class="po-status pending">Pending Approval</div>
+              </div>
+              <div class="po-items-preview"><div class="po-item-tag">Daging Sapi 50kg</div><div class="po-item-tag">Daging Ayam 20kg</div><div class="po-item-tag">Tulang 15kg</div></div>
+              <div class="po-total-row"><div class="po-actions"><div class="po-btn view">Lihat</div><div class="po-btn approve">✓ Approve</div><div class="po-btn reject">✗ Tolak</div></div><div class="po-total-val">Rp 1.750.000</div></div>
+            </div>
+            <div class="po-card">
+              <div class="po-card-top">
+                <div><div class="po-id">PO-2026-0285</div><div class="po-supplier">UD. Bumbu Nusantara</div><div class="po-meta">21 Feb 2026 · Cabang Bandung</div></div>
+                <div class="po-status approved">Approved</div>
+              </div>
+              <div class="po-items-preview"><div class="po-item-tag">Tepung Tapioka 10sak</div><div class="po-item-tag">Bumbu Kering</div></div>
+              <div class="po-total-row"><div class="po-actions"><div class="po-btn view">Lihat Detail</div><div class="po-btn approve" style="background:var(--accent);">📤 Kirim PO</div></div><div class="po-total-val">Rp 480.000</div></div>
+            </div>
+            <div class="po-card">
+              <div class="po-card-top">
+                <div><div class="po-id">PO-2026-0283</div><div class="po-supplier">CV. Daging Segar Prima</div><div class="po-meta">20 Feb 2026 · Gudang Pusat</div></div>
+                <div class="po-status sent">Terkirim</div>
+              </div>
+              <div class="po-items-preview"><div class="po-item-tag">Daging Sapi 80kg</div></div>
+              <div class="po-total-row"><div class="po-actions"><div class="po-btn view">Lihat</div><div class="po-btn approve" style="background:var(--warning);">+ Input GRN</div></div><div class="po-total-val">Rp 2.800.000</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. LEDGER COA -->
+      <div class="wf-card" style="grid-column: span 2;">
+        <div class="wf-card-header">
+          <div class="wf-card-title">WF-05 / BUKU BESAR & CHART OF ACCOUNTS</div>
+          <div class="wf-card-badge acc">AKUNTANSI</div>
+        </div>
+        <div class="wf-screen">
+          <div class="coa-screen">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+              <div style="font-size:11px;font-weight:700;">Buku Besar — Februari 2026</div>
+              <div style="display:flex;gap:6px;">
+                <div style="padding:4px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;font-size:9px;cursor:pointer;">📥 Export Excel</div>
+                <div style="padding:4px 10px;background:var(--accent3);color:white;border-radius:4px;font-size:9px;cursor:pointer;">🧾 e-Faktur</div>
+              </div>
+            </div>
+            <div class="coa-filters">
+              <div class="coa-filter-btn">Semua</div><div class="coa-filter-btn active">Pendapatan</div><div class="coa-filter-btn">Beban</div><div class="coa-filter-btn">Aset</div><div class="coa-filter-btn">Kewajiban</div>
+            </div>
+            <table class="ledger-table">
+              <thead><tr><th>KODE</th><th>NAMA AKUN</th><th>DEBIT (Rp)</th><th>KREDIT (Rp)</th><th>SALDO (Rp)</th><th>AUTO</th></tr></thead>
+              <tbody>
+                <tr class="group-header"><td colspan="6">4 — PENDAPATAN</td></tr>
+                <tr><td>4-01-01</td><td>Penjualan Bakso</td><td>—</td><td class="credit-val">48.250.000</td><td class="balance-pos">48.250.000</td><td style="text-align:center;"><span style="color:var(--success);font-size:10px;">⚡</span></td></tr>
+                <tr><td>4-01-02</td><td>Penjualan Minuman</td><td>—</td><td class="credit-val">8.140.000</td><td class="balance-pos">8.140.000</td><td style="text-align:center;"><span style="color:var(--success);font-size:10px;">⚡</span></td></tr>
+                <tr><td>4-01-03</td><td>Penjualan GrabFood/GoFood</td><td>—</td><td class="credit-val">12.300.000</td><td class="balance-pos">12.300.000</td><td style="text-align:center;"><span style="color:var(--success);font-size:10px;">⚡</span></td></tr>
+                <tr class="group-header"><td colspan="6">5 — HARGA POKOK PENJUALAN</td></tr>
+                <tr><td>5-01-01</td><td>HPP Daging Sapi</td><td class="debit-val">15.800.000</td><td>—</td><td class="credit-val">(15.800.000)</td><td style="text-align:center;"><span style="color:var(--success);font-size:10px;">⚡</span></td></tr>
+                <tr><td>5-01-02</td><td>HPP Tepung & Bumbu</td><td class="debit-val">3.200.000</td><td>—</td><td class="credit-val">(3.200.000)</td><td style="text-align:center;"><span style="color:var(--success);font-size:10px;">⚡</span></td></tr>
+                <tr class="group-header"><td colspan="6">6 — BEBAN OPERASIONAL</td></tr>
+                <tr><td>6-01-01</td><td>Gaji & Tunjangan Karyawan</td><td class="debit-val">18.500.000</td><td>—</td><td class="credit-val">(18.500.000)</td><td style="text-align:center;"><span style="color:var(--text3);font-size:10px;">✎</span></td></tr>
+                <tr><td>6-01-03</td><td>Biaya Listrik & Gas</td><td class="debit-val">4.200.000</td><td>—</td><td class="credit-val">(4.200.000)</td><td style="text-align:center;"><span style="color:var(--text3);font-size:10px;">✎</span></td></tr>
+              </tbody>
+            </table>
+            <div style="display:flex;justify-content:flex-end;gap:24px;margin-top:8px;padding:8px;background:var(--surface2);border-radius:4px;">
+              <div style="font-size:10px;color:var(--text3);">⚡ = Jurnal Otomatis &nbsp;|&nbsp; ✎ = Input Manual</div>
+              <div style="font-size:10px;font-weight:700;color:var(--success);">Laba Kotor Periode: Rp 46.690.000</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+</div><!-- end main -->
+
+<script>
+// ============================================================
+//  PROTECTION LAYER — Property Of ~MAyx
+// ============================================================
+
+(function() {
+  'use strict';
+
+  function showForbidden(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    if (e && e.stopPropagation) e.stopPropagation();
+    document.getElementById('forbidden-overlay').classList.add('show');
+    return false;
+  }
+
+  // Block right-click context menu
+  document.addEventListener('contextmenu', showForbidden, true);
+
+  // Block common keyboard shortcuts for devtools / view-source
+  document.addEventListener('keydown', function(e) {
+    const key = e.key ? e.key.toUpperCase() : '';
+    const ctrl = e.ctrlKey || e.metaKey;
+    const shift = e.shiftKey;
+
+    // F12 — DevTools
+    if (e.keyCode === 123) return showForbidden(e);
+
+    // Ctrl+Shift+I — DevTools Inspect
+    if (ctrl && shift && key === 'I') return showForbidden(e);
+
+    // Ctrl+Shift+J — DevTools Console
+    if (ctrl && shift && key === 'J') return showForbidden(e);
+
+    // Ctrl+Shift+C — DevTools Picker
+    if (ctrl && shift && key === 'C') return showForbidden(e);
+
+    // Ctrl+U — View Source
+    if (ctrl && key === 'U') return showForbidden(e);
+
+    // Ctrl+S — Save Page
+    if (ctrl && key === 'S') return showForbidden(e);
+
+    // Ctrl+A — Select All
+    if (ctrl && key === 'A') return showForbidden(e);
+
+    // Ctrl+P — Print (exposes HTML)
+    if (ctrl && key === 'P') return showForbidden(e);
+  }, true);
+
+  // Detect DevTools open via window size heuristic
+  var devToolsOpen = false;
+  var threshold = 160;
+  function checkDevTools() {
+    var widthDiff = window.outerWidth - window.innerWidth > threshold;
+    var heightDiff = window.outerHeight - window.innerHeight > threshold;
+    if ((widthDiff || heightDiff) && !devToolsOpen) {
+      devToolsOpen = true;
+      document.getElementById('forbidden-overlay').classList.add('show');
+    }
+    if (!widthDiff && !heightDiff && devToolsOpen) {
+      devToolsOpen = false;
+    }
+  }
+  setInterval(checkDevTools, 1000);
+
+  // Block drag-select
+  document.addEventListener('dragstart', function(e) { e.preventDefault(); }, true);
+
+  // Block print via media
+  if (window.matchMedia) {
+    window.matchMedia('print').addListener(function(mql) {
+      if (mql.matches) showForbidden();
+    });
+  }
+
+})();
+
+// ============================================================
+//  CLOSE FORBIDDEN OVERLAY
+// ============================================================
+function closeForbidden() {
+  document.getElementById('forbidden-overlay').classList.remove('show');
+}
+
+// ============================================================
+//  NAV
+// ============================================================
+function showScreen(name, e) {
+  document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+  document.querySelectorAll('.nav-tab').forEach(function(t) { t.classList.remove('active'); });
+  document.getElementById('screen-' + name).classList.add('active');
+  if (e && e.target) e.target.classList.add('active');
+}
+
+// ============================================================
+//  POS DEMO
+// ============================================================
+function addToOrder(name, price) {
+  var container = document.getElementById('orderItems');
+  var priceNum = parseInt(price.replace(/\D/g,''));
+  var item = document.createElement('div');
+  item.className = 'order-item-wf';
+  item.style.animation = 'fadeIn 0.3s ease';
+  item.innerHTML =
+    '<div class="order-item-qty" style="background:var(--accent2);">1</div>' +
+    '<div style="flex:1;padding:0 6px;"><div style="font-size:10px;color:var(--text);">' + name + '</div></div>' +
+    '<div style="font-size:10px;color:var(--text2);font-family:var(--mono);">' + Math.round(priceNum/1000) + 'K</div>';
+  container.appendChild(item);
+}
+
+function showPayment() {
+  alert('Pilih Metode Pembayaran:\n1. 💳 QRIS\n2. 💵 Tunai\n3. 🏧 EDC Card\n\n[Demo: Dalam sistem nyata, akan muncul modal pembayaran]');
+}
+
+// Bar chart animation
+document.addEventListener('DOMContentLoaded', function() {
+  var bars = document.querySelectorAll('.bar-wf');
+  var heights = [40, 60, 45, 80, 55, 90, 70];
+  bars.forEach(function(bar, i) {
+    bar.style.height = '0%';
+    setTimeout(function() { bar.style.height = heights[i] + '%'; }, i * 80 + 200);
+  });
+});
+</script>
+<style>
+@keyframes fadeIn { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: translateX(0); } }
+</style>
+</body>
+</html>
